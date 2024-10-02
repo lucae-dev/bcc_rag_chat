@@ -6,9 +6,9 @@ import bck_rag_chat.controller.request.ChatRequest;
 import bck_rag_chat.controller.request.ChatResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.*;
@@ -19,12 +19,20 @@ public class ChatService {
 
     private final OpenAIConfig openAIConfig;
     private final RestTemplate restTemplate;
+    private final ChatClient chatClient;
 
-
-    @Autowired
-    public ChatService(OpenAIConfig openAIConfig, RestTemplate restTemplate) {
+    public ChatService(OpenAIConfig openAIConfig, RestTemplate restTemplate, ChatClient.Builder chatClientBuilder) {
         this.openAIConfig = openAIConfig;
         this.restTemplate = restTemplate;
+        this.chatClient = chatClientBuilder.build();
+    }
+
+    public ChatResponse getChatResponse1(ChatRequest chatRequest) {
+        String responseMessage = chatClient.prompt()
+                .user(chatRequest.getMessage())
+                .call()
+                .content();
+        return new ChatResponse(responseMessage);
     }
 
     public ChatResponse getChatResponse(ChatRequest chatRequest) {
@@ -47,16 +55,16 @@ public class ChatService {
 
             // Build the request body
             Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("model", "gpt-3.5-turbo"); // or 'gpt-4' if you have access
+            requestBody.put("model", "gpt-4o-mini"); // or 'gpt-4' if you have access
             requestBody.put("messages", messages);
 
             // Set up headers
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setBearerAuth(apiKey);
-            System.out.println(headers);
 
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+            //System.out.println(requestEntity);
 
             // Make the POST request
             ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
@@ -65,6 +73,7 @@ public class ChatService {
             if (responseEntity.getStatusCode() == HttpStatus.OK) {
                 String responseBody = responseEntity.getBody();
 
+                System.out.println(responseEntity);
                 // Parse the response
                 ObjectMapper objectMapper = new ObjectMapper();
                 Map<String, Object> responseMap = objectMapper.readValue(responseBody, Map.class);
