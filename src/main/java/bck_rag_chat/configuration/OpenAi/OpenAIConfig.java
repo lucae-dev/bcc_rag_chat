@@ -1,6 +1,6 @@
-package bck_rag_chat.configuration;
+package bck_rag_chat.configuration.OpenAi;
 
-import bck_rag_chat.service.ChatService;
+import bck_rag_chat.service.chat.ChatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
