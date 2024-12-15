@@ -1,6 +1,6 @@
 package bck_rag_chat.configuration.OpenAi;
 
-import bck_rag_chat.service.chat.client.OpenAiClient;
+import bck_rag_chat.chat.service.client.OpenAiClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

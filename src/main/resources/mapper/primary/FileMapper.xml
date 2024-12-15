@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bck_rag_chat.mapper.primary.FileMapper">
+
+    <!-- Result Map for File Entity -->
+    <resultMap id="FileResultMap" type="bck_rag_chat.file.model.File">
+        <id property="id" column="id" javaType="java.util.UUID" jdbcType="OTHER"/>
+        <result property="insertDate" column="insert_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="version" column="version" javaType="long" jdbcType="BIGINT"/>
+        <result property="orderUnique" column="order_unique" javaType="long" jdbcType="BIGINT"/>
+        <result property="agentId" column="agent_id" javaType="java.util.UUID" jdbcType="OTHER"/>
+        <result property="chatId" column="chat_id" javaType="java.util.UUID" jdbcType="OTHER"/>
+        <result property="fileName" column="file_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="fileType" column="file_type" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="status" column="status" javaType="bck_rag_chat.file.model.FileStatus" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- Insert File -->
+    <insert id="insert" parameterType="bck_rag_chat.file.model.File">
+        INSERT INTO files (
+            id,
+            insert_date,
+            update_date,
+            version,
+            order_unique,
+            agent_id,
+            chat_id,
+            file_name,
+            file_type,
+            status
+        )
+        VALUES (
+                   #{id},
+                   #{insertDate},
+                   #{updateDate},
+                   #{version},
+                   #{orderUnique},
+                   #{agentId},
+                   #{chatId},
+                   #{fileName},
+                   #{fileType},
+                   #{status}
+               )
+    </insert>
+
+    <!-- Update File with Optional Fields -->
+    <update id="update" parameterType="bck_rag_chat.file.model.File">
+        UPDATE files
+        <set>
+            <if test="insertDate != null">insert_date = #{insertDate},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="version != 0">version = #{version},</if>
+            <if test="orderUnique != 0">order_unique = #{orderUnique},</if>
+            <if test="agentId != null">agent_id = #{agentId},</if>
+            <if test="chatId != null">chat_id = #{chatId},</if>
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="fileType != null">file_type = #{fileType},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- Find File by ID -->
+    <select id="findById" parameterType="java.util.UUID" resultMap="FileResultMap">
+        SELECT
+            id,
+            insert_date,
+            update_date,
+            version,
+            order_unique,
+            agent_id,
+            chat_id,
+            file_name,
+            file_type,
+            status
+        FROM files
+        WHERE id = #{id}
+    </select>
+
+    <!-- Find Files by Parameters -->
+    <select id="findByParam" parameterType="map" resultMap="FileResultMap">
+        SELECT
+        id,
+        insert_date,
+        update_date,
+        version,
+        order_unique,
+        agent_id,
+        chat_id,
+        file_name,
+        file_type,
+        status
+        FROM files
+        WHERE 1=1
+        <if test="id != null">AND id = #{id}</if>
+        <if test="insertDate != null">AND insert_date = #{insertDate}</if>
+        <if test="updateDate != null">AND update_date = #{updateDate}</if>
+        <if test="version != 0">AND version = #{version}</if>
+        <if test="orderUnique != 0">AND order_unique = #{orderUnique}</if>
+        <if test="agentId != null">AND agent_id = #{agentId}</if>
+        <if test="chatId != null">AND chat_id = #{chatId}</if>
+        <if test="fileName != null">AND file_name = #{fileName}</if>
+        <if test="fileType != null">AND file_type = #{fileType}</if>
+        <if test="status != null">AND status = #{status}</if>
+    </select>
+
+    <!-- Delete File by ID -->
+    <delete id="delete" parameterType="java.util.UUID">
+        DELETE FROM files
+        WHERE id = #{id}
+    </delete>
+
+    <!-- Select Files by Status -->
+    <select id="findByStatus" parameterType="String" resultMap="FileResultMap">
+        SELECT * FROM files WHERE status = #{status} ORDER BY order_unique ASC
+    </select>
+
+</mapper>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bck_rag_chat.mapper.primary.UserMapper">
+
+    <!-- Result Map for User Entity -->
+    <resultMap id="UserResultMap" type="bck_rag_chat.user.model.User">
+        <id property="id" column="id" javaType="java.util.UUID" jdbcType="OTHER"/>
+        <result property="insertDate" column="insert_date" javaType="java.time.Instant" jdbcType="TIMESTAMP"/>
+        <result property="updateDate" column="update_date" javaType="java.time.Instant" jdbcType="TIMESTAMP"/>
+        <result property="version" column="version" javaType="long" jdbcType="BIGINT"/>
+        <result property="orderUnique" column="order_unique" javaType="long" jdbcType="BIGINT"/>
+        <result property="email" column="email" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="password" column="password" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="googleId" column="google_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- Insert User -->
+    <insert id="insert" parameterType="bck_rag_chat.user.model.User">
+        INSERT INTO users (
+            id,
+            insert_date,
+            update_date,
+            version,
+            order_unique,
+            email,
+            password,
+            google_id
+        )
+        VALUES (
+                   #{id},
+                   #{insertDate},
+                   #{updateDate},
+                   #{version},
+                   #{orderUnique},
+                   #{email},
+                   #{password},
+                   #{googleId}
+               )
+    </insert>
+
+    <!-- Update User with Optional Fields -->
+    <update id="update" parameterType="bck_rag_chat.user.model.User">
+        UPDATE users
+        <set>
+            <if test="insertDate != null">insert_date = #{insertDate},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="version != 0">version = #{version},</if>
+            <if test="orderUnique != 0">order_unique = #{orderUnique},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="googleId != null">google_id = #{googleId},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- Find User by ID -->
+    <select id="findById" parameterType="java.util.UUID" resultMap="UserResultMap">
+        SELECT
+            id,
+            insert_date,
+            update_date,
+            version,
+            order_unique,
+            email,
+            password,
+            google_id
+        FROM users
+        WHERE id = #{id}
+    </select>
+
+    <!-- Find User by Email -->
+    <select id="findByEmail" parameterType="java.lang.String" resultMap="UserResultMap">
+        SELECT
+            id,
+            insert_date,
+            update_date,
+            version,
+            order_unique,
+            email,
+            password,
+            google_id
+        FROM users
+        WHERE email = #{email}
+    </select>
+
+    <!-- Find Users by Parameters -->
+    <select id="findByParams" parameterType="map" resultMap="UserResultMap">
+        SELECT
+        id,
+        insert_date,
+        update_date,
+        version,
+        order_unique,
+        email,
+        password,
+        google_id
+        FROM users
+        WHERE 1=1
+        <if test="id != null">AND id = #{id}</if>
+        <if test="insertDate != null">AND insert_date = #{insertDate}</if>
+        <if test="updateDate != null">AND update_date = #{updateDate}</if>
+        <if test="version != null">AND version = #{version}</if>
+        <if test="orderUnique != null">AND order_unique = #{orderUnique}</if>
+        <if test="email != null">AND email = #{email}</if>
+        <if test="googleId != null">AND google_id = #{googleId}</if>
+    </select>
+
+    <!-- Delete User by ID -->
+    <delete id="delete" parameterType="java.util.UUID">
+        DELETE FROM users
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
