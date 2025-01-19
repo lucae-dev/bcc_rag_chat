@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,12 +21,15 @@ public class AuthenticationContainerIntegrationTest extends BaseHttpTest {
 
     public static final String AUTH_BASE_PATH = "/v1/auth";
     @Autowired private UserRepository userRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
 
     @Test
     void name() {
+        String password = randomString(5, 20);
+        String encodedPassword = passwordEncoder.encode(password);
         User user = User.builder()
                 .withEmail("test@test.com")
-                .withPassword("password")
+                .withPassword(encodedPassword)
                 .build();
 
         userRepository.insert(user);
@@ -34,7 +38,7 @@ public class AuthenticationContainerIntegrationTest extends BaseHttpTest {
         // given
         LoginRequest loginRequest = new LoginRequestBuilder()
                 .withEmail(user.getEmail())
-                .withPassword("password")
+                .withPassword(password)
                 .build();
 
         // when
@@ -48,7 +52,7 @@ public class AuthenticationContainerIntegrationTest extends BaseHttpTest {
     @Test
     public void registrationLogin_shouldCreateUserAndAuthenticate() {
         // given
-        String email = randomString(1, 20) + "@" + randomString(1, 20) + "." + randomString(1, 4);
+        String email = randomString(1, 20) + "@" + randomString(1, 20) + "." + randomString(2, 4);
         String password = randomString(8);
         RegistrationRequest registrationRequest = random(RegistrationRequestBuilder.class)
                 .withEmail(email)

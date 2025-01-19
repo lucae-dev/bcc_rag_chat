@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SystemPropertiesConfiguration {
 
-    @Value("${aws.default.region}")
+    @Value("${aws.default.region:eu-central-1}")
     String defaultRegion;
 
     @Value("${system.environment}")

@@ -30,7 +30,7 @@ dependencies {
 	implementation 'org.flywaydb:flyway-database-postgresql:10.20.1'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.'
+	implementation 'software.amazon.awssdk:s3:2.20.60'
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 

@@ -21,7 +21,7 @@ public class DataSourceConfig {
     @Value("${spring.datasource.primary.jdbc-url}")
     private String jdbcUrl;
 
-    @Value("${spring.datasource.primary.email}")
+    @Value("${spring.datasource.primary.username}")
     private String username;
 
     @Value("${spring.datasource.primary.password}")
