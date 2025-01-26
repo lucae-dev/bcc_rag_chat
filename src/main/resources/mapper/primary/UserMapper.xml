@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="bck_rag_chat.mapper.primary.UserMapper">
+<mapper namespace="bck_instapic.mapper.primary.UserMapper">
 
     <!-- Result Map for User Entity -->
-    <resultMap id="UserResultMap" type="bck_rag_chat.user.model.User">
+    <resultMap id="UserResultMap" type="bck_instapic.user.model.User">
         <id property="id" column="id" javaType="java.util.UUID" jdbcType="OTHER"/>
         <result property="insertDate" column="insert_date" javaType="java.time.Instant" jdbcType="TIMESTAMP"/>
         <result property="updateDate" column="update_date" javaType="java.time.Instant" jdbcType="TIMESTAMP"/>
@@ -17,7 +17,7 @@
     </resultMap>
 
     <!-- Insert User -->
-    <insert id="insert" parameterType="bck_rag_chat.user.model.User">
+    <insert id="insert" parameterType="bck_instapic.user.model.User">
         INSERT INTO users (
             id,
             insert_date,
@@ -41,7 +41,7 @@
     </insert>
 
     <!-- Update User with Optional Fields -->
-    <update id="update" parameterType="bck_rag_chat.user.model.User">
+    <update id="update" parameterType="bck_instapic.user.model.User">
         UPDATE users
         <set>
             <if test="insertDate != null">insert_date = #{insertDate},</if>

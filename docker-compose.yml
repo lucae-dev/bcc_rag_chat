@@ -3,9 +3,9 @@ version: '3.8'
 services:
   db:
     image: ankane/pgvector:latest
-    container_name: rag_chat_db
+    container_name: instapic
     environment:
-      POSTGRES_DB: rag_chat
+      POSTGRES_DB: instapic
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
     ports:

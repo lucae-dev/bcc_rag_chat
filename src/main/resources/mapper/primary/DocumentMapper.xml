@@ -3,19 +3,19 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="bck_rag_chat.mapper.primary.DocumentMapper">
+<mapper namespace="bck_instapic.mapper.primary.DocumentMapper">
 
-    <resultMap id="DocumentResultMap" type="bck_rag_chat.document.model.Document">
-        <id property="id" column="id" typeHandler="bck_rag_chat.configuration.typehandler.UUIDTypeHandler" />
+    <resultMap id="DocumentResultMap" type="bck_instapic.document.model.Document">
+        <id property="id" column="id" typeHandler="bck_instapic.configuration.typehandler.UUIDTypeHandler" />
         <result property="document" column="document" />
-        <result property="ownerId" column="owner_id" typeHandler="bck_rag_chat.configuration.typehandler.UUIDTypeHandler" />
-        <result property="groupId" column="group_id" typeHandler="bck_rag_chat.configuration.typehandler.UUIDTypeHandler" />
-        <result property="embedding" column="embedding" typeHandler="bck_rag_chat.configuration.typehandler.VectorTypeHandler"/>
-        <result property="parentDocumentId" column="parent_document_id" typeHandler="bck_rag_chat.configuration.typehandler.UUIDTypeHandler" />
+        <result property="ownerId" column="owner_id" typeHandler="bck_instapic.configuration.typehandler.UUIDTypeHandler" />
+        <result property="groupId" column="group_id" typeHandler="bck_instapic.configuration.typehandler.UUIDTypeHandler" />
+        <result property="embedding" column="embedding" typeHandler="bck_instapic.configuration.typehandler.VectorTypeHandler"/>
+        <result property="parentDocumentId" column="parent_document_id" typeHandler="bck_instapic.configuration.typehandler.UUIDTypeHandler" />
     </resultMap>
 
     <!-- Insert Document -->
-    <insert id="insertDocument" parameterType="bck_rag_chat.document.model.Document" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertDocument" parameterType="bck_instapic.document.model.Document" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO documents (document, owner_id, group_id, embedding, parent_document_id)
         VALUES (#{document}, #{ownerId}, #{groupId}, #{embedding}, #{parentDocumentId})
     </insert>
@@ -28,7 +28,7 @@
     </select>
 
     <!-- Update Document with Optional Parameters -->
-    <update id="update" parameterType="bck_rag_chat.document.model.Document">
+    <update id="update" parameterType="bck_instapic.document.model.Document">
         UPDATE documents
         <set>
             <if test="document != null">

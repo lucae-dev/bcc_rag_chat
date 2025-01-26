@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="bck_rag_chat.mapper.primary.FileMapper">
+<mapper namespace="bck_instapic.mapper.primary.FileMapper">
 
     <!-- Result Map for File Entity -->
-    <resultMap id="FileResultMap" type="bck_rag_chat.file.model.File">
+    <resultMap id="FileResultMap" type="bck_instapic.file.model.File">
         <id property="id" column="id" javaType="java.util.UUID" jdbcType="OTHER"/>
         <result property="insertDate" column="insert_date"/>
         <result property="updateDate" column="update_date"/>
@@ -15,11 +15,11 @@
         <result property="chatId" column="chat_id" javaType="java.util.UUID" jdbcType="OTHER"/>
         <result property="fileName" column="file_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="fileType" column="file_type" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property="status" column="status" javaType="bck_rag_chat.file.model.FileStatus" jdbcType="VARCHAR"/>
+        <result property="status" column="status" javaType="bck_instapic.file.model.FileStatus" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- Insert File -->
-    <insert id="insert" parameterType="bck_rag_chat.file.model.File">
+    <insert id="insert" parameterType="bck_instapic.file.model.File">
         INSERT INTO files (
             id,
             insert_date,
@@ -47,7 +47,7 @@
     </insert>
 
     <!-- Update File with Optional Fields -->
-    <update id="update" parameterType="bck_rag_chat.file.model.File">
+    <update id="update" parameterType="bck_instapic.file.model.File">
         UPDATE files
         <set>
             <if test="insertDate != null">insert_date = #{insertDate},</if>
