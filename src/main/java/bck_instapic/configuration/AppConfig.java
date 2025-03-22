@@ -22,7 +22,7 @@ public class AppConfig {
 
     @Bean
     public JwtBuilder getJwtBuilder() {
-        return Jwts.builder().signWith(SignatureAlgorithm.HS512, SECRET_KEY.getBytes());
+        return Jwts.builder().signWith(SignatureAlgorithm.HS512, SECRET_KEY);
     }
 
     @Bean

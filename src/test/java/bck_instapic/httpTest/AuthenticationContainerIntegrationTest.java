@@ -7,6 +7,7 @@ import bck_instapic.authentication.controller.request.RegistrationRequestBuilder
 import bck_instapic.authentication.controller.response.LoginResponse;
 import bck_instapic.authentication.controller.response.RegistrationResponse;
 import bck_instapic.user.model.User;
+import bck_instapic.user.model.UserBuilder;
 import bck_instapic.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +26,14 @@ public class AuthenticationContainerIntegrationTest extends BaseHttpTest {
 
     @Test
     void name() {
-        String password = randomString(5, 20);
+        String password = randomString(8, 20);
         String encodedPassword = passwordEncoder.encode(password);
-        User user = User.builder()
+        User user = new UserBuilder()
                 .withEmail("test@test.com")
                 .withPassword(encodedPassword)
                 .build();
 
         userRepository.insert(user);
-        System.out.println(userRepository.findByEmail("test@test.com"));
 
         // given
         LoginRequest loginRequest = new LoginRequestBuilder()
@@ -86,12 +86,12 @@ public class AuthenticationContainerIntegrationTest extends BaseHttpTest {
         LoginResponse loginResponseBody = loginResponseEntity.getBody();
         assertNotNull(loginResponseBody);
 
-        String token = loginResponseBody.token();
+        String token = loginResponseBody.jwtToken();
         assertNotNull(token);
 
         // when
         // then
-        ResponseEntity<Void> randomRequestResponse = sendRandomRequest("token");
+        ResponseEntity<Void> randomRequestResponse = sendRandomRequest(token);
 
         assertNotNull(randomRequestResponse);
         // assertNotEquals(HttpStatus.FORBIDDEN, randomRequestResponse.getStatusCode());
@@ -99,11 +99,11 @@ public class AuthenticationContainerIntegrationTest extends BaseHttpTest {
     }
 
     private RegistrationResponse sendRegistrationRequest(RegistrationRequest registrationRequest) {
-        return post(AUTH_BASE_PATH + "/registration", registrationRequest, RegistrationResponse.class, null);
+        return post(AUTH_BASE_PATH + "/register", registrationRequest, RegistrationResponse.class, null);
     }
 
     private ResponseEntity<RegistrationResponse> sendRegistrationRequestEntity(RegistrationRequest registrationRequest) {
-        return postResponseEntity(AUTH_BASE_PATH + "/registration", registrationRequest, RegistrationResponse.class, null);
+        return postResponseEntity(AUTH_BASE_PATH + "/register", registrationRequest, RegistrationResponse.class, null);
     }
 
     private <T> ResponseEntity<Void> sendRandomRequest(String token) {

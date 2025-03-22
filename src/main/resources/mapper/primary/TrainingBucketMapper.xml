@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bck_instapic.mapper.primary.TrainingBucketMapper">
+
+    <!-- Result Map -->
+    <resultMap id="TrainingBucketResultMap" type="bck_instapic.trainingbuckets.model.TrainingBucket">
+        <id property="id" column="id" javaType="java.util.UUID" jdbcType="OTHER"/>
+        <result property="userId" column="user_id" javaType="java.util.UUID" jdbcType="OTHER"/>
+        <result property="s3Path" column="s3_path" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="status" column="status" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="insertDate" column="insert_date" javaType="java.time.Instant" jdbcType="TIMESTAMP"/>
+        <result property="updateDate" column="update_date" javaType="java.time.Instant" jdbcType="TIMESTAMP"/>
+        <result property="version" column="version" javaType="long" jdbcType="BIGINT"/>
+        <result property="orderUnique" column="order_unique" javaType="long" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <!-- Insert -->
+    <insert id="insert" parameterType="bck_instapic.trainingbuckets.model.TrainingBucket">
+        INSERT INTO training_buckets (
+            id,
+            user_id,
+            s3_path,
+            status,
+            insert_date,
+            update_date,
+            version,
+            order_unique
+        )
+        VALUES (
+                   #{id},
+                   #{userId},
+                   #{s3Path},
+                   #{status},
+                   #{insertDate},
+                   #{updateDate},
+                   #{version},
+                   #{orderUnique}
+               )
+    </insert>
+
+    <!-- Update (only non-null fields) -->
+    <update id="update" parameterType="bck_instapic.trainingbuckets.model.TrainingBucket">
+        UPDATE training_buckets
+        <set>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="s3Path != null">s3_path = #{s3Path},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="insertDate != null">insert_date = #{insertDate},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="version != 0">version = #{version},</if>
+            <if test="orderUnique != 0">order_unique = #{orderUnique},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- Find by ID -->
+    <select id="findById" parameterType="java.util.UUID" resultMap="TrainingBucketResultMap">
+        SELECT
+            id, user_id, s3_path, status,
+            insert_date, update_date, version, order_unique
+        FROM training_buckets
+        WHERE id = #{id}
+    </select>
+
+    <!-- Find by userID -->
+    <select id="findByUserId" parameterType="java.util.UUID" resultMap="TrainingBucketResultMap">
+        SELECT
+            id, user_id, s3_path, status,
+            insert_date, update_date, version, order_unique
+        FROM training_buckets
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- Find by any param (example) -->
+    <select id="findByParams" parameterType="map" resultMap="TrainingBucketResultMap">
+        SELECT
+        id, user_id, s3_path, status,
+        insert_date, update_date, version, order_unique
+        FROM training_buckets
+        WHERE 1=1
+        <if test="id != null">AND id = #{id}</if>
+        <if test="userId != null">AND user_id = #{userId}</if>
+        <if test="s3Path != null">AND s3_path = #{s3Path}</if>
+        <if test="status != null">AND status = #{status}</if>
+    </select>
+
+    <!-- Delete -->
+    <delete id="delete" parameterType="java.util.UUID">
+        DELETE FROM training_buckets
+        WHERE id = #{id}
+    </delete>
+</mapper>

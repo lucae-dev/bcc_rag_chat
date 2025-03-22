@@ -4,17 +4,20 @@ import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public class TestContainerInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-    private static final DockerImageName POSTGRES_IMAGE = DockerImageName.parse("ankane/pgvector:latest")
+
+    private static final DockerImageName POSTGRES_IMAGE = DockerImageName
+            .parse("ankane/pgvector:latest")
             .asCompatibleSubstituteFor("postgres");
-    private static final DockerImageName MINIO_IMAGE = DockerImageName.parse("minio/minio:latest");
+
+    private static final DockerImageName LOCALSTACK_IMAGE = DockerImageName.parse("localstack/localstack:latest");
 
     private static final PostgreSQLContainer<?> postgreSQLContainer;
-    private static final GenericContainer<?> minioContainer;
+    private static final LocalStackContainer localStackContainer;
 
     static {
         // Initialize and start PostgreSQL container
@@ -24,36 +27,37 @@ public class TestContainerInitializer implements ApplicationContextInitializer<C
                 .withPassword("test");
         postgreSQLContainer.start();
 
-        // Initialize and start MinIO container
-        minioContainer = new GenericContainer<>(MINIO_IMAGE)
-                .withEnv("MINIO_ACCESS_KEY", "minioadmin")
-                .withEnv("MINIO_SECRET_KEY", "minioadmin")
-                .withCommand("server", "/data")
-                .withExposedPorts(9000)
-                //.waitingFor(Wait.forLogMessage(".*APIv2.*ready.*", 1))
-        ;
-        minioContainer.start();
+        // Initialize and start LocalStack container (for S3)
+        localStackContainer = new LocalStackContainer(LOCALSTACK_IMAGE)
+                .withServices(LocalStackContainer.Service.S3)
+                .withEnv("DEFAULT_REGION", "eu-central-1");
+        localStackContainer.start();
     }
 
     @Override
     public void initialize(@NotNull ConfigurableApplicationContext applicationContext) {
-        String minioUrl = String.format("http://%s:%d",
-                "127.0.0.1",
-                minioContainer.getMappedPort(9000));
+        // We grab the S3 endpoint from LocalStack
+        String s3Endpoint = localStackContainer
+                .getEndpoint()
+                .toString();
+
+        // Retrieve the LocalStack credentials
+        String accessKey = localStackContainer.getAccessKey();
+        String secretKey = localStackContainer.getSecretKey();
+        String region    = localStackContainer.getRegion();
 
         TestPropertyValues.of(
                 // PostgreSQL properties
                 "spring.datasource.primary.jdbc-url=" + postgreSQLContainer.getJdbcUrl(),
-                "spring.datasource.primary.email=" + postgreSQLContainer.getUsername(),
+                "spring.datasource.primary.username=" + postgreSQLContainer.getUsername(),
                 "spring.datasource.primary.password=" + postgreSQLContainer.getPassword(),
                 "spring.datasource.primary.driver-class-name=" + postgreSQLContainer.getDriverClassName(),
 
-                // MinIO properties
-                "aws.endpoint.override=" + minioUrl,
-                "aws.accessKeyId=minioadmin",
-                "aws.secretAccessKey=minioadmin"
+                // AWS / LocalStack properties
+                "aws.endpoint.override=" + s3Endpoint,
+                "aws.accessKeyId=" + accessKey,
+                "aws.secretAccessKey=" + secretKey,
+                "aws.region=" + region
         ).applyTo(applicationContext.getEnvironment());
     }
-
-
 }

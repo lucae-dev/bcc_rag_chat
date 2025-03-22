@@ -73,7 +73,7 @@ public class AuthenticationService {
         return Optional.of(userDTO.email())
                 .map(jwtTokenProvider::generateToken)
                 .map(LoginResponse::new)
-                .orElseThrow(() -> new LoginException("There was an error during token generation"));
+                .orElseThrow(() -> new LoginException("There was an error during jwtToken generation"));
     }
 
     private void verifyPassword(LoginRequest loginRequest, UserDTO userDTO) {

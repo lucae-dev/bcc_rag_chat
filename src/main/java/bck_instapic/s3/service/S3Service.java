@@ -10,6 +10,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -112,7 +114,7 @@ public class S3Service {
         }
     }
 
-    public URL generatePresignedUrl(String bucketName, String key, long expirationInSeconds) {
+    public URL generateGETPresignedUrl(String bucketName, String key, long expirationInSeconds) {
         try {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
@@ -125,6 +127,30 @@ public class S3Service {
                     .build();
 
             return s3Presigner.presignGetObject(presignRequest).url();
+        } catch (NoSuchBucketException e) {
+            throw new S3BucketNotFoundException(bucketName);
+        } catch (NoSuchKeyException e) {
+            throw new S3ObjectNotFoundException(key, bucketName);
+        } catch (S3Exception e) {
+            throw new S3ClientException("Failed to generate presigned URL for: " + bucketName + "/" + key, e);
+        }
+    }
+
+    public URL generatePUTPresignedUrl(String bucketName, String key, long expirationInSeconds) {
+        try {
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+
+            PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+                    .signatureDuration(Duration.ofSeconds(expirationInSeconds))
+                    .putObjectRequest(putObjectRequest)
+                    .build();
+
+            PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
+
+            return presignedRequest.url();
         } catch (NoSuchBucketException e) {
             throw new S3BucketNotFoundException(bucketName);
         } catch (NoSuchKeyException e) {

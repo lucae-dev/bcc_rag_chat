@@ -1,6 +1,7 @@
 package bck_instapic.user.service;
 
 import bck_instapic.user.model.User;
+import bck_instapic.user.model.UserBuilder;
 import bck_instapic.user.repository.UserRepository;
 import bck_instapic.user.service.dto.UserDTO;
 import bck_instapic.user.service.dto.UserDTOBuilder;
@@ -46,7 +47,7 @@ public class UserService {
     }
 
     private User convertUserDTOtoEntity(UserDTO userDTO) {
-        return User.builder()
+        return new UserBuilder()
                 .withEmail(userDTO.email())
                 .withPassword(userDTO.password())
                 .withGoogleId(userDTO.googleId())

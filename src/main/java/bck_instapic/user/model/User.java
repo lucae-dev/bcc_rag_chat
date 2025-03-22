@@ -7,7 +7,6 @@ import lombok.*;
 @ToString(callSuper = true, includeFieldNames = true, doNotUseGetters = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(setterPrefix = "with", builderClassName = "UserBuilder")
 public class User extends BaseEntity {
     private String email;
     private String password;
