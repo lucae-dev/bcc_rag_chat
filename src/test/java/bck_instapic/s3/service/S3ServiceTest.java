@@ -43,7 +43,7 @@ class S3ServiceTest extends BaseContainerIntegrationTest {
     }
 
     @Test
-    @Disabled // presigned url  probably not supported by minio (or needs adjustment in the test)
+    @Disabled // presigned presignedUrl  probably not supported by minio (or needs adjustment in the test)
     void testUploadAndDownloadUsingPresignedUrls() throws IOException {
         // Given
         String bucketName = "your-test-bucket";
@@ -103,7 +103,7 @@ class S3ServiceTest extends BaseContainerIntegrationTest {
     private String generatePresignedUploadUrl(String bucketName, String key, long expirationInSeconds) {
         try {
             // Assuming S3Service has a method to generate upload presigned URLs
-            return s3Service.generatePresignedUrl(bucketName, key, expirationInSeconds).toString();
+            return s3Service.generateGETPresignedUrl(bucketName, key, expirationInSeconds).toString();
         } catch (Exception e) {
             fail("Failed to generate upload presigned URL: " + e.getMessage());
             return null;

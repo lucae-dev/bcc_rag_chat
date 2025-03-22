@@ -1,6 +1,7 @@
 package bck_instapic.user.userDetail;
 
 import bck_instapic.user.model.User;
+import bck_instapic.user.model.UserBuilder;
 import bck_instapic.user.repository.UserRepository;
 import bck_instapic.user.userDetail.userInfo.GoogleOAuth2UserInfo;
 import bck_instapic.user.userDetail.userInfo.OAuth2UserInfo;
@@ -74,7 +75,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         if (user == null) {
             // Register new user
-            user = User.builder()
+            user = new UserBuilder()
                     .withEmail(email)
                     .withGoogleId(providerId)
                     .build();

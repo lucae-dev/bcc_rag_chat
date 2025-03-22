@@ -69,7 +69,7 @@ public class JwtTokenProvider {
             jwtParser.parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            // Invalid token
+            // Invalid jwtToken
             return false;
         }
     }
